@@ -2,7 +2,7 @@
 
 사용자분들과 가볍게 생각을 주고 받을 수 있는 커뮤니티 서비스입니다.
 
-## 프로젝트 기능 및 설계
+## 🧾 프로젝트 기능 및 설계
 
 - 유저 🧑🏻‍💻
     - 회원가입 기능
@@ -14,6 +14,12 @@
         - 로그인한 사용자는 로그아웃을 할 수 있다.
     - 마이페이지 조회 기능
         - 로그인된 사용자는 마이페이지를 조회 할 수 있으며, 자신이 작성한 게시글, 댓글을 볼수있다. 그리고 비밀번호, 닉네임, 이메일 변경이 가능하다.
+    - 회원정보 수정 기능
+        - 회원가입된 사용자는 회원 정보를 수정할 수 있으며, 닉네임(중복되지 않는), 이메일등 수정 할 수 있다.
+    - 비밀번호 수정 기능
+        - 회원가입된 사용자는 비밀번호를 변경할 수 있다.
+    - 회원 탈퇴 기능
+        - 회원가입된 사용자는 회원 탈퇴를 할 수 있다.
 
 ---
 
@@ -63,8 +69,8 @@
 ### Tech Stack 🛠️
 
 <div> 
-  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
-  <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
-  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
-  <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+  <img alt="java" src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img alt="spring" src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
+  <img alt="mysql" src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+  <img alt="git" src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </div>
