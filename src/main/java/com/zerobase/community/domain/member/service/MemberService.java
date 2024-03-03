@@ -24,7 +24,14 @@ public class MemberService {
   @Transactional(readOnly = true)
   public Member findById(Long memberId) {
     return memberRepository.findById(memberId)
-        .orElseThrow(() -> new MemberException("회원없습니다."));
+        .orElseThrow(() -> new MemberException("회원이 없습니다."));
+  }
+
+  // 회원조회 메서드(회원 아이디기 이용 조회)
+  @Transactional(readOnly = true)
+  public Member findByLoginId(String loginId) {
+    return memberRepository.findByLoginId(loginId)
+        .orElseThrow(() -> new MemberException("회원이 없습니다."));
   }
 
   // 회원가입 메서드
