@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
 
   // 회원조회 메서드(PK 이용 조회)
-  @Transactional
+  @Transactional(readOnly = true)
   public Member findById(Long memberId) {
     return memberRepository.findById(memberId)
         .orElseThrow(() -> new MemberException("회원없습니다."));
@@ -33,12 +31,12 @@ public class MemberService {
   @Transactional
   public Member join(MemberJoinRequestDto request) {
     // 1. 아이디 중복검사
-    Optional<Member> findLoginId = memberRepository.findByLoginId(request.getLoginId());
-    checkDuplication(findLoginId, "이미 존재하는 아이디 입니다.");
+    boolean byLoginIdExists = memberRepository.existsByLoginId(request.getLoginId());
+    if (byLoginIdExists) throw new MemberException("이미 존재하는 아이디입니다.");
 
     // 2. 닉네임 중복검사
-    Optional<Member> findNickName = memberRepository.findByNickName(request.getNickName());
-    checkDuplication(findNickName, "이미 존재하는 닉네임 입니다.");
+    boolean byNickNameExists = memberRepository.existsByNickName(request.getNickName());
+    if (byNickNameExists) throw new MemberException("이미 존재하는 닉네임 입니다.");
 
     // 3. 회원가입
     return memberRepository.save(Member.builder()
@@ -67,8 +65,6 @@ public class MemberService {
 
     findMember.setNickName(request.getNickName());
     findMember.setEmail(request.getEmail());
-
-    memberRepository.save(findMember);
   }
 
   // 비밀번호 수정 메서드
@@ -91,10 +87,4 @@ public class MemberService {
     memberRepository.delete(findMember);
   }
 
-  // 중복검사 메서드
-  private static void checkDuplication(Optional<Member> findLoginId, String s) {
-    if (findLoginId.isPresent()) {
-      throw new MemberException(s);
-    }
-  }
 }
