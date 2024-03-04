@@ -1,7 +1,10 @@
 package com.zerobase.community.domain.member.entity;
 
+import com.zerobase.community.domain.board.entity.Board;
 import com.zerobase.community.domain.member.Grade;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -38,6 +41,9 @@ public class Member {
     @Column(name = "grade")
     @Enumerated(EnumType.STRING)
     private Grade grade;
+
+    @OneToMany(mappedBy = "member")
+    private List<Board> boardList = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
