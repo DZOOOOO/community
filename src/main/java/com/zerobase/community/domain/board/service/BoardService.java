@@ -44,8 +44,7 @@ public class BoardService {
         .orElseThrow(() -> new BoardException("게시글이 없습니다."));
 
     // 2. 수정 게시글 작성 유저와 수정하려는 유저가 같은지 체크
-    Member writeMember = target.getMember();
-    checkEqualsMember(loginMember, writeMember);
+    checkUser(loginMember, target);
 
     // 3. 수정 데이터 반영.
     target.setTitle(dto.getTitle());
@@ -60,8 +59,7 @@ public class BoardService {
         .orElseThrow(() -> new BoardException("게시글이 없습니다."));
 
     // 2. 삭제 게시글 작성 유저와 삭제하려는 유저가 같은지 체크
-    Member writeMember = target.getMember();
-    checkEqualsMember(loginMember, writeMember);
+    checkUser(loginMember, target);
 
     // 3. 삭제 데이터 반영.
     boardRepository.deleteById(boardId);
@@ -83,9 +81,9 @@ public class BoardService {
         .build();
   }
 
-  // 같은 맴버인지 확인하는 메서드
-  private static void checkEqualsMember(Member loginMember, Member writeMember) {
-    if (!writeMember.getLoginId().equals(loginMember.getLoginId())) {
+  private static void checkUser(Member loginMember, Board target) {
+    Member writeMember = target.getMember();
+    if (!writeMember.equalsMember(loginMember)) {
       throw new BoardException("작성자가 다릅니다.");
     }
   }

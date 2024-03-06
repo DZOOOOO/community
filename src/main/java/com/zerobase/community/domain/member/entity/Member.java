@@ -22,36 +22,41 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "login_id", unique = true, updatable = false)
-    private String loginId;
+  @Column(name = "login_id", unique = true, updatable = false)
+  private String loginId;
 
-    @Column(name = "password")
-    private String password;
+  @Column(name = "password")
+  private String password;
 
-    @Column(name = "nickname", unique = true)
-    private String nickName;
+  @Column(name = "nickname", unique = true)
+  private String nickName;
 
-    @Column(name = "email")
-    private String email;
+  @Column(name = "email")
+  private String email;
 
-    @Column(name = "grade")
-    @Enumerated(EnumType.STRING)
-    private Grade grade;
+  @Column(name = "grade")
+  @Enumerated(EnumType.STRING)
+  private Grade grade;
 
-    @OneToMany(mappedBy = "member")
-    private List<Board> boardList = new ArrayList<>();
+  @OneToMany(mappedBy = "member")
+  private List<Board> boardList = new ArrayList<>();
 
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt = LocalDateTime.now();
+  @CreatedDate
+  @Column(name = "created_at", updatable = false)
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime createdAt = LocalDateTime.now();
 
-    @LastModifiedDate
-    @Column(name = "updated_at", updatable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+  @LastModifiedDate
+  @Column(name = "updated_at", updatable = false)
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime updatedAt = LocalDateTime.now();
+
+  // 작성자 권한 체크 메서드
+  public boolean equalsMember(Member otherMember) {
+    return this.loginId.equals(otherMember.getLoginId());
+  }
 }
