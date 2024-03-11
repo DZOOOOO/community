@@ -1,6 +1,7 @@
 package com.zerobase.community.web.exception;
 
 import com.zerobase.community.web.board.exception.BoardException;
+import com.zerobase.community.web.comment.exception.CommentException;
 import com.zerobase.community.web.exception.fielderror.CustomFieldError;
 import com.zerobase.community.web.exception.response.ExceptionResponse;
 import com.zerobase.community.web.member.exception.MemberException;
@@ -29,6 +30,14 @@ public class GlobalExceptionController {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ExceptionResponse boardErrorResponse(BoardException e) {
     log.error("[Board Exception] ", e);
+    return new ExceptionResponse(e.getMessage());
+  }
+
+  // Comment Exception
+  @ExceptionHandler(CommentException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ExceptionResponse commentErrorResponse(CommentException e) {
+    log.error("[Comment Exception] ", e);
     return new ExceptionResponse(e.getMessage());
   }
 
