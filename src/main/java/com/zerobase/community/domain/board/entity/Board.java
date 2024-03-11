@@ -1,5 +1,6 @@
 package com.zerobase.community.domain.board.entity;
 
+import com.zerobase.community.domain.comment.entity.Comment;
 import com.zerobase.community.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +49,9 @@ public class Board {
   @ManyToOne
   @JoinColumn(name = "member_id")
   private Member member;
+
+  @OneToMany(mappedBy = "board")
+  private List<Comment> commentList = new ArrayList<>();
 
   @CreatedDate
   @Column(name = "created_at", updatable = false)

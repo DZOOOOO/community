@@ -2,13 +2,19 @@ package com.zerobase.community.domain.board.service;
 
 import com.zerobase.community.domain.board.entity.Board;
 import com.zerobase.community.domain.board.repository.BoardRepository;
+import com.zerobase.community.domain.comment.entity.Comment;
 import com.zerobase.community.domain.member.entity.Member;
 import com.zerobase.community.web.board.dto.request.BoardEditRequestDto;
 import com.zerobase.community.web.board.dto.request.BoardWriteRequestDto;
+import com.zerobase.community.web.board.dto.response.BoardListViewResponse;
 import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import com.zerobase.community.web.board.exception.BoardException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,13 +78,31 @@ public class BoardService {
     Board target = boardRepository.findById(boardId)
         .orElseThrow(() -> new BoardException("게시글이 없습니다."));
 
+    // 2. 댓글 내용 리스트에 담기
+    List<String> commentList = target.getCommentList().stream()
+        .map(Comment::getContent).toList();
+
     return DetailViewBoardResponse.builder()
         .title(target.getTitle())
         .content(target.getContent())
         .writeMemberNickName(target.getMember().getNickName())
+        .commentList(commentList)
         .createdAt(target.getCreatedAt())
         .updatedAt(target.getUpdatedAt())
         .build();
+  }
+
+  // 게시글 리스트 조회 (페이징 처리)
+  @Transactional(readOnly = true)
+  public List<BoardListViewResponse> boardListview(Pageable pageable) {
+    Page<Board> boardList = boardRepository.findAll(pageable);
+    return boardList.stream().map(board -> BoardListViewResponse.builder()
+            .boardId(board.getId())
+            .title(board.getTitle())
+            .commentCount(board.getCommentList().size())
+            .createdAt(board.getCreatedAt())
+            .build())
+        .collect(Collectors.toList());
   }
 
   private static void checkUser(Member loginMember, Board target) {

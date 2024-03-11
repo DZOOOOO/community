@@ -8,6 +8,9 @@ import com.zerobase.community.web.board.dto.request.BoardWriteRequestDto;
 import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +33,7 @@ public class BoardController {
   private final BoardService boardService;
 
   // 게시글 작성 API
-  @PostMapping("/write")
+  @PostMapping
   public ResponseEntity<?> writeBoard(@Validated @RequestBody BoardWriteRequestDto dto,
       @SessionAttribute(name = "loginMember", required = false) Member loginMember) {
 
@@ -47,7 +50,7 @@ public class BoardController {
   }
 
   // 게시글 수정 API
-  @PutMapping("/edit")
+  @PutMapping
   public ResponseEntity<?> editBoard(@Validated @RequestBody BoardEditRequestDto dto,
       @SessionAttribute(name = "loginMember", required = false) Member loginMember) {
 
@@ -64,7 +67,7 @@ public class BoardController {
   }
 
   // 게시글 삭제 API
-  @DeleteMapping("/delete/{boardId}")
+  @DeleteMapping("/{boardId}")
   public ResponseEntity<?> deleteBoard(
       @PathVariable("boardId") Long boardId,
       @SessionAttribute(name = "loginMember", required = false) Member loginMember) {
@@ -82,7 +85,7 @@ public class BoardController {
   }
 
   // 게시글 상세조회 API
-  @GetMapping("/view/{boardId}")
+  @GetMapping("/{boardId}")
   public ResponseEntity<?> detailViewBoard(@PathVariable("boardId") Long boardId) {
     // 1. 게시글 조회
     DetailViewBoardResponse target = boardService.detailViewBoard(boardId);
@@ -90,6 +93,14 @@ public class BoardController {
     return new ResponseEntity<>(target, HttpStatus.OK);
   }
 
-  // 게시글 목록조회 API - 페이징 처리(page = 1, size = 10) - 댓글 도메인 생성 이후 구현
-
+  // 게시글 목록조회 API - 페이징 처리 -> id 기준 내림차순
+  @GetMapping("/list")
+  public ResponseEntity<?> boardViewList(
+      @PageableDefault(
+          page = 0,
+          size = 10,
+          sort = {"id"},
+          direction = Direction.DESC) Pageable pageable) {
+    return new ResponseEntity<>(boardService.boardListview(pageable), HttpStatus.OK);
+  }
 }
