@@ -1,17 +1,25 @@
-package com.zerobase.community.domain.member.entity;
+package com.zerobase.community.domain.comment.entity;
 
 import com.zerobase.community.domain.board.entity.Board;
-import com.zerobase.community.domain.member.Grade;
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import lombok.*;
+import com.zerobase.community.domain.member.entity.Member;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,30 +28,24 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Member {
+public class Comment {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "login_id", unique = true, updatable = false)
-  private String loginId;
+  @Column(name = "content")
+  private String content;
 
-  @Column(name = "password")
-  private String password;
+  // FK
+  @ManyToOne
+  @JoinColumn(name = "member_id")
+  private Member member;
 
-  @Column(name = "nickname", unique = true)
-  private String nickName;
-
-  @Column(name = "email")
-  private String email;
-
-  @Column(name = "grade")
-  @Enumerated(EnumType.STRING)
-  private Grade grade;
-
-  @OneToMany(mappedBy = "member")
-  private List<Board> boardList = new ArrayList<>();
+  // FK
+  @ManyToOne
+  @JoinColumn(name = "board_id")
+  private Board board;
 
   @CreatedDate
   @Column(name = "created_at", updatable = false)
@@ -55,8 +57,4 @@ public class Member {
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime updatedAt = LocalDateTime.now();
 
-  // 작성자 권한 체크 메서드
-  public boolean equalsMember(Member otherMember) {
-    return this.loginId.equals(otherMember.getLoginId());
-  }
 }
