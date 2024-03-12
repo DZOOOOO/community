@@ -6,6 +6,7 @@ import com.zerobase.community.domain.comment.entity.Comment;
 import com.zerobase.community.domain.member.entity.Member;
 import com.zerobase.community.web.board.dto.request.BoardEditRequestDto;
 import com.zerobase.community.web.board.dto.request.BoardWriteRequestDto;
+import com.zerobase.community.web.board.dto.response.BoardInfoResponse;
 import com.zerobase.community.web.board.dto.response.BoardListViewResponse;
 import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import com.zerobase.community.web.board.exception.BoardException;
@@ -103,6 +104,18 @@ public class BoardService {
             .createdAt(board.getCreatedAt())
             .build())
         .collect(Collectors.toList());
+  }
+
+  // 게시글 제목으로 검색 메서드
+  @Transactional(readOnly = true)
+  public List<BoardInfoResponse> searchBoardTitle(String keyword, Pageable pageable) {
+
+    return boardRepository.findByTitleContainingIgnoreCase(keyword, pageable)
+        .stream().map(b -> BoardInfoResponse.builder()
+            .id(b.getId())
+            .title(b.getTitle())
+            .createdAt(b.getCreatedAt())
+            .build()).toList();
   }
 
   private static void checkUser(Member loginMember, Board target) {

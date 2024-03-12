@@ -6,6 +6,7 @@ import com.zerobase.community.web.member.dto.request.MemberEditRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberJoinRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberLoginRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberPasswordRequestDto;
+import com.zerobase.community.web.member.dto.response.MemberInfoResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Positive;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,7 +44,7 @@ public class MemberController {
   @PostMapping("/login")
   public ResponseEntity<?> loginMember(@Validated @RequestBody MemberLoginRequestDto dto,
       HttpServletRequest request) {
-    
+
     // 1. 아이디 비밀번호 확인
     Member loginMember = memberService.login(dto);
 
@@ -76,7 +78,7 @@ public class MemberController {
       log.error("회원정보 수정 API 오류 - 로그인 사용자 X");
       return new ResponseEntity<>("다시 입력해주세요.", HttpStatus.BAD_REQUEST);
     }
-    
+
     memberService.editMember(dto, loginMember);
 
     return new ResponseEntity<>("회원정보 수정", HttpStatus.OK);
@@ -111,5 +113,20 @@ public class MemberController {
     memberService.deleteMember(memberId);
 
     return new ResponseEntity<>("회원탈퇴", HttpStatus.OK);
+  }
+
+  // 마이페이지 조회 API
+  @GetMapping("/mypage")
+  public ResponseEntity<?> getMyPage(
+      @SessionAttribute(name = "loginMember", required = false) Member loginMember) {
+
+    if (loginMember == null) {
+      log.error("마이페이지 조회 API 오류 - 로그인 사용자 X");
+      return new ResponseEntity<>("로그인이 필요합니다..", HttpStatus.BAD_REQUEST);
+    }
+
+    MemberInfoResponse myPage = memberService.getMyPage(loginMember);
+
+    return new ResponseEntity<>(myPage, HttpStatus.OK);
   }
 }
