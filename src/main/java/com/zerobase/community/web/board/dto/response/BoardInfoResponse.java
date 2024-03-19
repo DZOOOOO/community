@@ -19,4 +19,6 @@ public class BoardInfoResponse {
   private String title;
 
   private LocalDateTime createdAt;
+
+
 }

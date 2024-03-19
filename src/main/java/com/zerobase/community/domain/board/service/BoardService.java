@@ -10,6 +10,7 @@ import com.zerobase.community.web.board.dto.response.BoardInfoResponse;
 import com.zerobase.community.web.board.dto.response.BoardListViewResponse;
 import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import com.zerobase.community.web.board.exception.BoardException;
+import com.zerobase.community.web.search.dto.response.SearchPageResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -108,14 +109,26 @@ public class BoardService {
 
   // 게시글 제목으로 검색 메서드
   @Transactional(readOnly = true)
-  public List<BoardInfoResponse> searchBoardTitle(String keyword, Pageable pageable) {
+  public SearchPageResponse searchBoardTitle(String keyword, Pageable pageable) {
 
-    return boardRepository.findByTitleContainingIgnoreCase(keyword, pageable)
+    Page<Board> boardPage = boardRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+    List<BoardInfoResponse> boardInfoResponseList
+        = boardPage.getContent()
         .stream().map(b -> BoardInfoResponse.builder()
             .id(b.getId())
             .title(b.getTitle())
             .createdAt(b.getCreatedAt())
-            .build()).toList();
+            .build())
+        .toList();
+
+    return SearchPageResponse.builder()
+        .content(boardInfoResponseList)
+        .pageNo(pageable.getPageNumber())
+        .pageSize(pageable.getPageSize())
+        .totalElements(boardPage.getTotalElements())
+        .totalPages(boardPage.getTotalPages())
+        .last(boardPage.isLast())
+        .build();
   }
 
   private static void checkUser(Member loginMember, Board target) {

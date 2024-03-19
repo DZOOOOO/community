@@ -1,8 +1,7 @@
 package com.zerobase.community.web.search.controller;
 
 import com.zerobase.community.domain.board.service.BoardService;
-import com.zerobase.community.web.board.dto.response.BoardInfoResponse;
-import java.util.List;
+import com.zerobase.community.web.search.dto.response.SearchPageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +20,12 @@ public class SearchController {
   private final BoardService boardService;
 
   // 제목 검색으로 게시글 찾기
-  @GetMapping("/search")
+  @GetMapping("/board/search")
   public ResponseEntity<?> search(@RequestParam(name = "keyword") String keyword,
       @PageableDefault(
           page = 0,
           size = 10) Pageable pageable) {
-    List<BoardInfoResponse> boardList = boardService.searchBoardTitle(keyword, pageable);
-    return new ResponseEntity<>(boardList, HttpStatus.OK);
+    SearchPageResponse boardPageResponse = boardService.searchBoardTitle(keyword, pageable);
+    return new ResponseEntity<>(boardPageResponse, HttpStatus.OK);
   }
 }
