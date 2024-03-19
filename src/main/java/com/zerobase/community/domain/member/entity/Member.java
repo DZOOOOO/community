@@ -1,6 +1,7 @@
 package com.zerobase.community.domain.member.entity;
 
 import com.zerobase.community.domain.board.entity.Board;
+import com.zerobase.community.domain.comment.entity.Comment;
 import com.zerobase.community.domain.member.Grade;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -44,6 +45,9 @@ public class Member {
 
   @OneToMany(mappedBy = "member")
   private List<Board> boardList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "member")
+  private List<Comment> commentList = new ArrayList<>();
 
   @CreatedDate
   @Column(name = "created_at", updatable = false)

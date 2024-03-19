@@ -1,11 +1,11 @@
 package com.zerobase.community.domain.member.service;
 
 import com.zerobase.community.domain.member.Grade;
+import com.zerobase.community.domain.member.entity.Member;
+import com.zerobase.community.domain.member.repository.MemberRepository;
 import com.zerobase.community.web.member.dto.request.MemberEditRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberJoinRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberLoginRequestDto;
-import com.zerobase.community.domain.member.entity.Member;
-import com.zerobase.community.domain.member.repository.MemberRepository;
 import com.zerobase.community.web.member.dto.request.MemberPasswordRequestDto;
 import com.zerobase.community.web.member.exception.MemberException;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +39,15 @@ public class MemberService {
   public Member join(MemberJoinRequestDto request) {
     // 1. 아이디 중복검사
     boolean byLoginIdExists = memberRepository.existsByLoginId(request.getLoginId());
-    if (byLoginIdExists) throw new MemberException("이미 존재하는 아이디입니다.");
+    if (byLoginIdExists) {
+      throw new MemberException("이미 존재하는 아이디입니다.");
+    }
 
     // 2. 닉네임 중복검사
     boolean byNickNameExists = memberRepository.existsByNickName(request.getNickName());
-    if (byNickNameExists) throw new MemberException("이미 존재하는 닉네임 입니다.");
+    if (byNickNameExists) {
+      throw new MemberException("이미 존재하는 닉네임 입니다.");
+    }
 
     // 3. 회원가입
     return memberRepository.save(Member.builder()

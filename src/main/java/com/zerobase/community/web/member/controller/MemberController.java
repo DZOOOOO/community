@@ -42,7 +42,7 @@ public class MemberController {
   @PostMapping("/login")
   public ResponseEntity<?> loginMember(@Validated @RequestBody MemberLoginRequestDto dto,
       HttpServletRequest request) {
-    
+
     // 1. 아이디 비밀번호 확인
     Member loginMember = memberService.login(dto);
 
@@ -76,7 +76,7 @@ public class MemberController {
       log.error("회원정보 수정 API 오류 - 로그인 사용자 X");
       return new ResponseEntity<>("다시 입력해주세요.", HttpStatus.BAD_REQUEST);
     }
-    
+
     memberService.editMember(dto, loginMember);
 
     return new ResponseEntity<>("회원정보 수정", HttpStatus.OK);

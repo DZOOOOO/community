@@ -19,4 +19,6 @@ public class MemberEditRequestDto {
 
   @NotBlank(message = "이메일을 입력해주세요.")
   private String email;
+
+
 }
