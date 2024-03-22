@@ -18,6 +18,8 @@ public class BoardInfoResponse {
 
   private String title;
 
+  private Integer commentCount;
+
   private LocalDateTime createdAt;
 
 

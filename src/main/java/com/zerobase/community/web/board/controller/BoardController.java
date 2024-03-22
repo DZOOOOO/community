@@ -5,6 +5,7 @@ import com.zerobase.community.domain.board.service.BoardService;
 import com.zerobase.community.domain.member.entity.Member;
 import com.zerobase.community.web.board.dto.request.BoardEditRequestDto;
 import com.zerobase.community.web.board.dto.request.BoardWriteRequestDto;
+import com.zerobase.community.web.board.dto.response.BoardResponseDto;
 import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +41,17 @@ public class BoardController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("게시글 작성 API - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(BoardResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 게시글 작성 로직
     Board board = boardService.writeBoard(dto, loginMember);
 
-    return new ResponseEntity<>("게시글 작성완료.", HttpStatus.OK);
+    return new ResponseEntity<>(BoardResponseDto.builder()
+        .message("게시글 작성완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 게시글 수정 API
@@ -57,13 +62,17 @@ public class BoardController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("사용자 오류 - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(BoardResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 게시글 수정 로직
     boardService.editBoard(dto, loginMember);
 
-    return new ResponseEntity<>("게시글 수정완료.", HttpStatus.OK);
+    return new ResponseEntity<>(BoardResponseDto.builder()
+        .message("게시글 수정완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 게시글 삭제 API
@@ -75,13 +84,17 @@ public class BoardController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("사용자 오류 - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(BoardResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 게시글 삭제 로직 실행
     boardService.deleteBoard(boardId, loginMember);
 
-    return new ResponseEntity<>("삭제 완료.", HttpStatus.OK);
+    return new ResponseEntity<>(BoardResponseDto.builder()
+        .message("삭제 완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 게시글 상세조회 API
