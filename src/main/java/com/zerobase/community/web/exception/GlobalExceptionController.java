@@ -4,6 +4,7 @@ import com.zerobase.community.web.board.exception.BoardException;
 import com.zerobase.community.web.comment.exception.CommentException;
 import com.zerobase.community.web.exception.fielderror.CustomFieldError;
 import com.zerobase.community.web.exception.response.ExceptionResponse;
+import com.zerobase.community.web.interceptor.InterceptorException;
 import com.zerobase.community.web.member.exception.MemberException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,13 @@ public class GlobalExceptionController {
     List<CustomFieldError> fieldErrors = CustomFieldError.getFieldErrors(e.getBindingResult());
     log.error("[Field Exception] = {}", fieldErrors);
     return new ExceptionResponse(fieldErrors.toString());
+  }
+
+  @ExceptionHandler(InterceptorException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ExceptionResponse InterceptorExceptionResponse(InterceptorException e) {
+    log.error("[Interceptor Exception] ", e);
+    return new ExceptionResponse(e.getMessage());
   }
 
 }
