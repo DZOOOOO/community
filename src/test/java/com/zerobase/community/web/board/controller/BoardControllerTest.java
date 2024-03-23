@@ -162,7 +162,7 @@ class BoardControllerTest extends ControllerTestSupport {
 
     when(boardService.detailViewBoard(1L)).thenReturn(board);
 
-    mockMvc.perform(get("/board/1"))
+    mockMvc.perform(get("/board/detail/1"))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.title").value("test-title"))
@@ -177,7 +177,7 @@ class BoardControllerTest extends ControllerTestSupport {
 
     when(boardService.detailViewBoard(1L)).thenThrow(new BoardException("게시글이 없습니다."));
 
-    mockMvc.perform(get("/board/1"))
+    mockMvc.perform(get("/board/detail/1"))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("게시글이 없습니다."));
@@ -191,20 +191,6 @@ class BoardControllerTest extends ControllerTestSupport {
     when(boardService.boardListview(pageable)).thenReturn(new BoardListViewResponse());
     mockMvc.perform(get("/board/list?page=1&size=10"))
         .andDo(print());
-
-    // 코드 질문
-//    BoardService mock = mock(BoardService.class);
-//    when(mock.boardListview(pageable)).thenReturn(any());
-//
-//    mockMvc.perform(get("/board/list?page=1&size=10"))
-//        .andDo(print())
-//        .andExpect(jsonPath("$.content").isArray())
-//        .andExpect(jsonPath("$.pageNo").value(1))
-//        .andExpect(jsonPath("$.pageSize").value(10))
-//        .andExpect(jsonPath("$.totalElements").value(anyInt()))
-//        .andExpect(jsonPath("$.totalPages").value(anyInt()))
-//        .andExpect(jsonPath("$.last").isBoolean());
-
   }
 
   @Test

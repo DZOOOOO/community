@@ -64,7 +64,7 @@ class MemberControllerTest extends ControllerTestSupport {
   }
 
   @Test
-  @DisplayName("로그아웃 API - 유저 정보가 세션에 있는 경우")
+  @DisplayName("로그아웃 API")
   void logout_success() throws Exception {
 
     Member member = Member.builder()
@@ -84,12 +84,12 @@ class MemberControllerTest extends ControllerTestSupport {
   }
 
   @Test
-  @DisplayName("로그아웃 API - 유저 정보가 세션에 없는 경우")
+  @DisplayName("로그아웃 API - 로그인 x")
   void logout_fail() throws Exception {
     mockMvc.perform(post("/member/logout"))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
+        .andExpect(jsonPath("$.message").value("로그인 후, 다시 시도해주세요."));
   }
 
   @Test
@@ -138,7 +138,7 @@ class MemberControllerTest extends ControllerTestSupport {
             .content(mapper.writeValueAsString(request)))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("다시 입력해주세요."));
+        .andExpect(jsonPath("$.message").value("로그인 후, 다시 시도해주세요."));
   }
 
   @Test
@@ -184,7 +184,7 @@ class MemberControllerTest extends ControllerTestSupport {
             .contentType(APPLICATION_JSON)
             .content(mapper.writeValueAsString(request)))
         .andDo(print())
-        .andExpect(jsonPath("$.message").value("다시 입력해주세요."))
+        .andExpect(jsonPath("$.message").value("로그인 후, 다시 시도해주세요."))
         .andExpect(request().sessionAttributeDoesNotExist());
   }
 
@@ -221,6 +221,6 @@ class MemberControllerTest extends ControllerTestSupport {
     mockMvc.perform(delete("/member/delete/1"))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("다시 입력해주세요."));
+        .andExpect(jsonPath("$.message").value("로그인 후, 다시 시도해주세요."));
   }
 }
