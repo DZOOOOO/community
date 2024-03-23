@@ -1,6 +1,6 @@
 package com.zerobase.community.web.board.dto.response;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,15 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class BoardListViewResponse {
-  // 게시글 번호
-  private Long boardId;
 
-  // 게시글 제목
-  private String title;
+  private List<BoardInfoResponse> content;
 
-  // 작성된 댓글 갯수
-  private Integer commentCount;
-
-  // 작성된 날짜
-  private LocalDateTime createdAt;
+  private int pageNo;
+  private int pageSize;
+  private long totalElements;
+  private int totalPages;
+  private boolean last;
 }

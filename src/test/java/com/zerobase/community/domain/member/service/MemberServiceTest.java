@@ -3,7 +3,7 @@ package com.zerobase.community.domain.member.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.zerobase.community.domain.member.Grade;
+import com.zerobase.community.IntegrationTestSupport;
 import com.zerobase.community.domain.member.entity.Member;
 import com.zerobase.community.domain.member.repository.MemberRepository;
 import com.zerobase.community.web.member.dto.request.MemberEditRequestDto;
@@ -13,15 +13,12 @@ import com.zerobase.community.web.member.dto.request.MemberPasswordRequestDto;
 import com.zerobase.community.web.member.exception.MemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
-@SpringBootTest
-class MemberServiceTest {
+class MemberServiceTest extends IntegrationTestSupport {
 
   @Autowired
   MemberService memberService;
@@ -29,188 +26,179 @@ class MemberServiceTest {
   @Autowired
   MemberRepository memberRepository;
 
-  // dto 생성 클래스
-  static class Dto {
-
-    public static MemberJoinRequestDto createDto(
-        String loginId,
-        String password,
-        String nickName,
-        String email) {
-      return MemberJoinRequestDto.builder()
-          .loginId(loginId)
-          .password(password)
-          .nickName(nickName)
-          .email(email)
-          .build();
-    }
-
-    public static MemberLoginRequestDto loginRequestDto(
-        String loginId,
-        String password) {
-      return MemberLoginRequestDto.builder()
-          .loginId(loginId)
-          .password(password)
-          .build();
-    }
-
-    public static MemberEditRequestDto editRequestDto(
-        String nickName,
-        String email) {
-      return MemberEditRequestDto.builder()
-          .nickName(nickName)
-          .email(email)
-          .build();
-    }
-
-    public static MemberPasswordRequestDto passwordRequestDto(
-        String password
-    ) {
-      return MemberPasswordRequestDto.builder()
-          .password(password)
-          .build();
-    }
-  }
-
-  @BeforeEach
-  void init() {
-    memberRepository.save(Member.builder()
-        .loginId("test")
-        .password("test")
-        .nickName("test")
-        .email("test")
-        .build());
-  }
-
   @AfterEach
-  void destroy() {
-    memberRepository.deleteAll();
+  void tearDown() {
+    memberRepository.deleteAllInBatch();
   }
 
   @Test
   @DisplayName("회원가입 메서드 테스트 - 정상 성공")
   void join_success() {
-    Member joinMember = memberService.join(Dto.createDto(
-        "user",
-        "test",
-        "user",
-        "test"));
+    // given
+    MemberJoinRequestDto request = MemberJoinRequestDto.builder()
+        .loginId("test")
+        .password("test")
+        .nickName("test")
+        .email("test@test.com")
+        .build();
 
-    assertThat(joinMember).isNotNull();
-    assertThat(joinMember.getLoginId()).isEqualTo("user");
-    assertThat(joinMember.getPassword()).isEqualTo("test");
-    assertThat(joinMember.getNickName()).isEqualTo("user");
-    assertThat(joinMember.getEmail()).isEqualTo("test");
-    assertThat(joinMember.getGrade()).isEqualTo(Grade.USER);
+    // when
+    Member member = memberService.join(request);
+
+    // then
+    assertThat(member).extracting("loginId", "password", "nickName", "email")
+        .containsExactlyInAnyOrder("test", "test", "test", "test@test.com");
   }
 
   @Test
   @DisplayName("로그인 아이디가 중복되는 경우 - 실패")
   void join_fail_loginIdDup() {
-    assertThatThrownBy(() -> memberService.join(Dto.createDto(
-        "test",
-        "test",
-        "nickName",
-        "test")))
-        .isInstanceOf(MemberException.class);
+    // given
+    createMember();
+    MemberJoinRequestDto request = MemberJoinRequestDto.builder()
+        .loginId("test")
+        .password("test1234")
+        .nickName("test1234")
+        .email("test1234@test.com")
+        .build();
+
+    // when
+    // then
+    assertThatThrownBy(() -> memberService.join(request))
+        .isInstanceOf(MemberException.class)
+        .hasMessage("이미 존재하는 아이디입니다.");
   }
 
   @Test
   @DisplayName("닉네임이 중복되는 경우 - 실패")
   void join_fail_nickNameDup() {
-    assertThatThrownBy(() -> memberService.join(Dto.createDto(
-        "loginId",
-        "test",
-        "test",
-        "test")))
-        .isInstanceOf(MemberException.class);
+    // given
+    createMember();
+    MemberJoinRequestDto request = MemberJoinRequestDto.builder()
+        .loginId("test1234")
+        .password("test1234")
+        .nickName("test")
+        .email("test1234@test.com")
+        .build();
+
+    // when
+    // then
+    assertThatThrownBy(() -> memberService.join(request))
+        .isInstanceOf(MemberException.class)
+        .hasMessage("이미 존재하는 닉네임 입니다.");
   }
 
   @Test
   @DisplayName("로그인 - 정상 성공")
   void login_success() {
-    Member member = memberService.login(Dto.loginRequestDto("test", "test"));
-    assertThat(member.getLoginId()).isEqualTo("test");
-    assertThat(member.getPassword()).isEqualTo("test");
+    // given
+    createMember();
+    MemberLoginRequestDto request = MemberLoginRequestDto.builder()
+        .loginId("test")
+        .password("test")
+        .build();
+
+    // when
+    Member loginMember = memberService.login(request);
+
+    // then
+    assertThat(loginMember).extracting("loginId", "password")
+        .containsExactlyInAnyOrder("test", "test");
   }
 
   @Test
   @DisplayName("로그인 - 아이디 실패")
   void login_id_fail() {
-    assertThatThrownBy(() -> memberService.login(Dto.loginRequestDto(
-        "user",
-        "test")))
-        .isInstanceOf(MemberException.class);
+    // given
+    createMember();
+    MemberLoginRequestDto request = MemberLoginRequestDto.builder()
+        .loginId("test123")
+        .password("test")
+        .build();
+
+    // when
+    // then
+    assertThatThrownBy(() -> memberService.login(request))
+        .isInstanceOf(MemberException.class)
+        .hasMessage("아이디, 비밀번호를 다시 확인해주세요.");
   }
 
   @Test
   @DisplayName("로그인 - 아이디, 비밀번호 일치 실패")
   void login_password_fail() {
-    assertThatThrownBy(() -> memberService.login(Dto.loginRequestDto(
-        "test",
-        "password")))
-        .isInstanceOf(MemberException.class);
+// given
+    createMember();
+    MemberLoginRequestDto request = MemberLoginRequestDto.builder()
+        .loginId("test")
+        .password("test123")
+        .build();
+
+    // when
+    // then
+    assertThatThrownBy(() -> memberService.login(request))
+        .isInstanceOf(MemberException.class)
+        .hasMessage("아이디, 비밀번호를 다시 확인해주세요.");
   }
 
   @Test
   @DisplayName("로그인 - 아이디, 비밀번호 둘다 실패")
   void login_id_password_fail() {
-    assertThatThrownBy(() -> memberService.login(Dto.loginRequestDto(
-        "user",
-        "password")))
-        .isInstanceOf(MemberException.class);
+    // given
+    createMember();
+    MemberLoginRequestDto request = MemberLoginRequestDto.builder()
+        .loginId("ewfewfwe")
+        .password("gregreger")
+        .build();
+
+    // when
+    // then
+    assertThatThrownBy(() -> memberService.login(request))
+        .isInstanceOf(MemberException.class)
+        .hasMessage("아이디, 비밀번호를 다시 확인해주세요.");
   }
 
   @Test
   @DisplayName("회원정보 수정 - 정상 성공")
   void edit_success() {
     // given
-    MemberJoinRequestDto joinDto = MemberJoinRequestDto.builder()
-        .loginId("pepsi")
-        .password("test")
-        .nickName("cola")
-        .email("pepsi@test.com")
+    Member loginMember = createMember();
+    MemberEditRequestDto request = MemberEditRequestDto.builder()
+        .email("edit@test.com")
+        .nickName("editNickName")
         .build();
-    Member member = memberService.join(joinDto);
-
-    MemberEditRequestDto dto = Dto.editRequestDto("coca-cola", "coca@email.com");
-    Member findMember = memberService.findById(member.getId());
 
     // when
-    memberService.editMember(dto, findMember);
+    memberService.editMember(request, loginMember);
+    Member target = memberService.findById(loginMember.getId());
 
     // then
-    Member editMember = memberService.findById(member.getId());
-    assertThat(editMember.getNickName()).isEqualTo("coca-cola");
-    assertThat(editMember.getEmail()).isEqualTo("coca@email.com");
+    assertThat(target).extracting("email", "nickName")
+        .containsExactlyInAnyOrder("edit@test.com", "editNickName");
   }
 
   @Test
   @DisplayName("비밀번호 수정 - 정상 성공")
   void edit_password_success() {
     // given
-    MemberPasswordRequestDto dto = Dto.passwordRequestDto("edit-password");
-    Member findMember = memberRepository.findByLoginId("test").get();
+    Member loginMember = createMember();
+    MemberPasswordRequestDto request = MemberPasswordRequestDto.builder()
+        .password("edit-test")
+        .build();
 
     // when
-    memberService.editPassword(dto, findMember);
+    memberService.editPassword(request, loginMember);
+    Member targetMember = memberService.findById(loginMember.getId());
 
     // then
-    Member editMember = memberRepository.findByLoginId("test").get();
-    assertThat(editMember.getPassword()).isEqualTo("edit-password");
+    assertThat(targetMember).extracting("password")
+        .isEqualTo("edit-test");
   }
 
   @Test
   @DisplayName("회원탈퇴 - 정상 성공")
   void delete_member_success() {
     // given
-    MemberJoinRequestDto dto = MemberJoinRequestDto.builder()
-        .loginId("pepsi")
-        .password("test")
-        .nickName("cola")
-        .email("pepsi@test.com")
-        .build();
-    Member member = memberService.join(dto);
+    Member member = createMember();
 
     // when
     memberService.deleteMember(member.getId());
@@ -219,5 +207,15 @@ class MemberServiceTest {
     assertThatThrownBy(() -> memberService.findById(member.getId()))
         .isInstanceOf(MemberException.class);
   }
+
+  private Member createMember() {
+    return memberRepository.save(Member.builder()
+        .loginId("test")
+        .password("test")
+        .nickName("test")
+        .email("test")
+        .build());
+  }
+
 
 }

@@ -12,7 +12,6 @@ import com.zerobase.community.web.board.dto.response.DetailViewBoardResponse;
 import com.zerobase.community.web.board.exception.BoardException;
 import com.zerobase.community.web.search.dto.response.SearchPageResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -96,15 +95,22 @@ public class BoardService {
 
   // 게시글 리스트 조회 (페이징 처리)
   @Transactional(readOnly = true)
-  public List<BoardListViewResponse> boardListview(Pageable pageable) {
+  public BoardListViewResponse boardListview(Pageable pageable) {
     Page<Board> boardList = boardRepository.findAll(pageable);
-    return boardList.stream().map(board -> BoardListViewResponse.builder()
-            .boardId(board.getId())
-            .title(board.getTitle())
-            .commentCount(board.getCommentList().size())
-            .createdAt(board.getCreatedAt())
-            .build())
-        .collect(Collectors.toList());
+
+    return BoardListViewResponse.builder()
+        .content(boardList.stream().map(b -> BoardInfoResponse.builder()
+            .id(b.getId())
+            .title(b.getTitle())
+            .commentCount(b.getCommentList().size())
+            .createdAt(b.getCreatedAt())
+            .build()).toList())
+        .pageNo(pageable.getPageNumber())
+        .pageSize(pageable.getPageSize())
+        .totalPages(boardList.getTotalPages())
+        .totalElements(boardList.getTotalElements())
+        .last(boardList.isLast())
+        .build();
   }
 
   // 게시글 제목으로 검색 메서드

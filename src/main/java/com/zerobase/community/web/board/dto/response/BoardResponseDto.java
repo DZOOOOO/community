@@ -1,4 +1,4 @@
-package com.zerobase.community.web.member.dto.response;
+package com.zerobase.community.web.board.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberResponse {
+public class BoardResponseDto {
+
   private String message;
+
 }

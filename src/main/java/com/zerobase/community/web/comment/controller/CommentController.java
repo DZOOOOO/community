@@ -5,6 +5,7 @@ import com.zerobase.community.domain.comment.service.CommentService;
 import com.zerobase.community.domain.member.entity.Member;
 import com.zerobase.community.web.comment.dto.request.CommentEditRequestDto;
 import com.zerobase.community.web.comment.dto.request.CommentWriteRequestDto;
+import com.zerobase.community.web.comment.dto.response.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,13 +36,17 @@ public class CommentController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("게시글 작성 API - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(CommentResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 댓글 작성 로직
     Comment comment = commentService.writeComment(dto, loginMember);
 
-    return new ResponseEntity<>("댓글 작성완료.", HttpStatus.OK);
+    return new ResponseEntity<>(CommentResponseDto.builder()
+        .message("댓글 작성완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 댓글 수정 API
@@ -52,13 +57,17 @@ public class CommentController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("게시글 작성 API - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(CommentResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 댓글 수정 로직
     commentService.editComment(dto, loginMember);
 
-    return new ResponseEntity<>("댓글 수정완료.", HttpStatus.OK);
+    return new ResponseEntity<>(CommentResponseDto.builder()
+        .message("댓글 수정완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 댓글 삭제 API
@@ -70,13 +79,17 @@ public class CommentController {
     // 1. 로그인 체크
     if (loginMember == null) {
       log.error("게시글 작성 API - 로그인 X");
-      return new ResponseEntity<>("로그인 후, 다시 시도해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(CommentResponseDto.builder()
+          .message("로그인 후, 다시 시도해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     // 2. 댓글 삭제 로직
     commentService.deleteComment(commentId, loginMember);
 
-    return new ResponseEntity<>("댓글 삭제완료.", HttpStatus.OK);
+    return new ResponseEntity<>(CommentResponseDto.builder()
+        .message("댓글 삭제완료.")
+        .build(), HttpStatus.OK);
   }
 
 }

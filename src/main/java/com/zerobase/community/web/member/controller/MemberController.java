@@ -6,6 +6,7 @@ import com.zerobase.community.web.member.dto.request.MemberEditRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberJoinRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberLoginRequestDto;
 import com.zerobase.community.web.member.dto.request.MemberPasswordRequestDto;
+import com.zerobase.community.web.member.dto.response.MemberResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Positive;
@@ -35,7 +36,12 @@ public class MemberController {
   @PostMapping("/join")
   public ResponseEntity<?> joinMember(@Validated @RequestBody MemberJoinRequestDto request) {
     Member member = memberService.join(request);
-    return new ResponseEntity<>(member, HttpStatus.OK);
+
+    return new ResponseEntity<>(
+        MemberResponseDto.builder()
+            .message("회원가입 완료.")
+            .build(),
+        HttpStatus.OK);
   }
 
   // 로그인 API
@@ -50,7 +56,9 @@ public class MemberController {
     HttpSession session = request.getSession();
     session.setAttribute("loginMember", loginMember);
 
-    return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
+    return new ResponseEntity<>(MemberResponseDto.builder()
+        .message("로그인 성공.")
+        .build(), HttpStatus.OK);
   }
 
   // 로그아웃 API
@@ -61,10 +69,14 @@ public class MemberController {
     if (session != null) {
       session.invalidate();
     } else {
-      return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(MemberResponseDto.builder()
+          .message("잘못된 요청입니다.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
-    return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
+    return new ResponseEntity<>(MemberResponseDto.builder()
+        .message("로그아웃 성공.")
+        .build(), HttpStatus.OK);
   }
 
   // 회원정보 수정 API
@@ -74,12 +86,16 @@ public class MemberController {
 
     if (loginMember == null) {
       log.error("회원정보 수정 API 오류 - 로그인 사용자 X");
-      return new ResponseEntity<>("다시 입력해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(MemberResponseDto.builder()
+          .message("다시 입력해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     memberService.editMember(dto, loginMember);
 
-    return new ResponseEntity<>("회원정보 수정", HttpStatus.OK);
+    return new ResponseEntity<>(MemberResponseDto.builder()
+        .message("회원정보 수정 완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 비밀번호 수정 API
@@ -89,12 +105,16 @@ public class MemberController {
 
     if (loginMember == null) {
       log.error("비밀번호 수정 API 오류 - 로그인 사용자 X");
-      return new ResponseEntity<>("다시 입력해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(MemberResponseDto.builder()
+          .message("다시 입력해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     memberService.editPassword(dto, loginMember);
 
-    return new ResponseEntity<>("비밀번호 수정", HttpStatus.OK);
+    return new ResponseEntity<>(MemberResponseDto.builder()
+        .message("비밀번호 수정 완료.")
+        .build(), HttpStatus.OK);
   }
 
   // 회원탈퇴 API
@@ -105,11 +125,16 @@ public class MemberController {
 
     if (loginMember == null) {
       log.error("회원탈퇴 API 오류 - 로그인 사용자 X");
-      return new ResponseEntity<>("다시 입력해주세요.", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(MemberResponseDto.builder()
+          .message("다시 입력해주세요.")
+          .build(), HttpStatus.BAD_REQUEST);
     }
 
     memberService.deleteMember(memberId);
 
-    return new ResponseEntity<>("회원탈퇴", HttpStatus.OK);
+    return new ResponseEntity<>(MemberResponseDto.builder()
+        .message("회원탈퇴 완료.")
+        .build(), HttpStatus.OK);
   }
 }
+
