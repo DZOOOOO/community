@@ -98,7 +98,7 @@ public class BoardController {
   }
 
   // 게시글 상세조회 API
-  @GetMapping("/{boardId}")
+  @GetMapping("/detail/{boardId}")
   public ResponseEntity<?> detailViewBoard(@PathVariable("boardId") Long boardId) {
     // 1. 게시글 조회
     DetailViewBoardResponse target = boardService.detailViewBoard(boardId);
