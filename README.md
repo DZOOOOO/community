@@ -12,8 +12,6 @@
         - 사용자는 로그인 할 수 있다. 로그인시 회원가입한 아이디와 비밀번호가 일치해야한다.
     - 로그아웃 기능
         - 로그인한 사용자는 로그아웃을 할 수 있다.
-    - 마이페이지 조회 기능
-        - 로그인된 사용자는 마이페이지를 조회 할 수 있으며, 자신이 작성한 게시글, 댓글을 볼수있다. 그리고 비밀번호, 닉네임, 이메일 변경이 가능하다.
     - 회원정보 수정 기능
         - 회원가입된 사용자는 회원 정보를 수정할 수 있으며, 닉네임(중복되지 않는), 이메일등 수정 할 수 있다.
     - 비밀번호 수정 기능
@@ -58,20 +56,30 @@
 - ### 검색 🔎
     - 조회 기능
         - 로그인하지 않은 사용자를 포함한 모든 사용자는 게시글에 대해 검색할 수 있다.
-        - 검색은 제목검색, 게시글 내용검색을 할 수 있으며, 검색 내용을 포함한 모든 데이터를 보여준다.(게시글 종류가 많은경우 Paging 처리)
+        - 검색은 제목검색을 할 수 있으며, 검색어와 일치하는 제목의 게시글을 볼 수 있다. (게시글 종류가 많은경우 Paging 처리)
 
-## ERD 📚
+## 📚 ERD 
 ![ERD](src/main/resources/static/img/ERD.png)
 
-## 도전 기능 🔥
-
-## Trouble Shooting ⚙️
+## 🔥 도전 
+- Field Error 전역 처리 (MethodArgumentNotValidException + BindingResult)
+- 페이징 처리 + 반환 DTO
+- Message Convertor Exception 없는 반환 DTO 정확하게 만들기
+- Layer 별 테스트 코드 작성 (Mockito)
 
 ### Tech Stack 🛠️
 
 <div> 
   <img alt="java" src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
-  <img alt="spring" src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
+  <img alt="spring" src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
   <img alt="mysql" src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
   <img alt="git" src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </div>
+
+## 🤔 회고
+- 코드를 작성하기전 설계를 고민해보자. (ERD, API, Test)
+- 생각보다 자바 기초가 많이 중요하다. (스트림, 자료구조....)
+- 테스트 코드를 작성하는 것은 프로덕션 코드에 좋은 영향을 준다. (매개변수의 유무, 유연한 설계를 고민.)
+- 고민없이 남의 코드를 복사 붙혀넣기 코드는 의미가 없다.
+- SQL 모르고 JPA 쓰지 말자.
+- 구체화에 의존하지 말고 추상화에 의존하자.
