@@ -2,17 +2,8 @@ package com.zerobase.community.domain.board.entity;
 
 import com.zerobase.community.domain.comment.entity.Comment;
 import com.zerobase.community.domain.member.entity.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "board", indexes = @Index(name = "idx_board_title", columnList = "title"))
 public class Board {
 
   @Id
