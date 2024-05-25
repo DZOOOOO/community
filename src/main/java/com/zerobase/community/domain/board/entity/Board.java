@@ -24,7 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "board", indexes = @Index(name = "idx_board_title", columnList = "title"))
+//@Table(name = "board", indexes = @Index(name = "idx_board_title", columnList = "title"))
 public class Board {
 
   @Id

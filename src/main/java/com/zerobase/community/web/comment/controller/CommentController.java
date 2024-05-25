@@ -43,7 +43,6 @@ public class CommentController {
 
     // 2. 댓글 작성 로직
     Comment comment = commentService.writeComment(dto, loginMember);
-
     return new ResponseEntity<>(CommentResponseDto.builder()
         .message("댓글 작성완료.")
         .build(), HttpStatus.OK);
